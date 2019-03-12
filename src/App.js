@@ -174,8 +174,7 @@ componentLoad() {
 render() {
 	var arr = []
 	if(this.state.searchData != ""){
-		
-		var pics = this.state.searchData.items.slice(0,50).map(item,index) => {
+		var pics = this.state.searchData.items.slice(0,50).map((item,index) => {
 			return(
         <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
         <Card value = {index} hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showModal(index)} height="200" width="200"/>}
