@@ -34,7 +34,7 @@ class App extends Component {
 		searchData: "",
 		search: "",
 		spot: "",
-		seen: false,
+		visible: false,
 		currentPic: 0,
 		currentFavorite: 0,
 		checkedBuildings: [],
@@ -43,13 +43,13 @@ class App extends Component {
 showData = (index) => {
 	if(this.state.current == "favorite"){
 		this.setState({
-			seen: true,
+			visible: true,
 			currentFavorite: index
 		});
 	}
 	else{
 		this.setState({
-			seen: true,
+			visible: true,
 			currentPic: index
 			});
 		}
@@ -61,12 +61,12 @@ userInput = e => {
 //Modal button
 handleYes = (e) => {
 	this.setState({
-		seen: false,
+		visible: false,
 		});
 	}
 handleNo = (e) => {
 	this.setState({
-		seen: false,
+		visible: false,
 		});
 	}
 //storing what centers have been chosen by the user
@@ -100,7 +100,7 @@ search = e => {
 	axios.get(searchWord)
 	.catch((error) => {
 		console.log("Bad Request")
-		})
+	})
 	.then((res => {
 		let data = res.data;
 		this.setState({searchData: data.collection})
@@ -152,8 +152,8 @@ componentLoad() {
       if(!ls.get("search")){
         ls.set("search", "")
       }
-      if(!ls.get("location")){
-        ls.set("location", "")
+      if(!ls.get("spot")){
+        ls.set("spot", "")
       }
       this.setState({
 
@@ -176,7 +176,7 @@ render() {
 	if(this.state.searchData != ""){
 		var pics = this.state.searchData.items.slice(0,50).map((item,index) => {
 			return(
-        <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
+        <Col span={6}  style={{paddingTop: 15, paddingRight: 20, paddingLeft: 20}}>
         <Card value = {index} hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -193,7 +193,7 @@ render() {
 	if(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr)){
 		var favPhotos = JSON.parse(ls.get("favorites")).reverse().map((item,index) => {
       return(
-        <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
+        <Col span={6}  style={{paddingTop: 15, paddingRight: 20, paddingLeft: 20}}>
         <Card  hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -242,7 +242,7 @@ render() {
         </div>
         {(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr))
         ?<Modal
-          title="Modal"
+          title="Basic Modal"
           visible={this.state.visable}
           onOk={this.handleYes}
           onCancel={this.handleNo}
@@ -270,7 +270,7 @@ render() {
         mode="horizontal"
         style={{ lineHeight: '64px' }}
         searchHistory={this.menuSelect}
-        selectedKey={[this.state.current]}
+        selectedKeys={[this.state.current]}
       >
       <Menu.Item key="app">
         <Icon type="camera" />Home Page
@@ -279,7 +279,7 @@ render() {
         <Icon type="star" />Favorite Images
       </Menu.Item>
       </Menu>
-      <Search style={{ width: 400, textAlign: 'center'}} placeholder="Search" id = "search" pressEnter={e => this.search(e)} userInput={e => this.userInput(e)} />
+      <Search style={{ width: 400, textAlign: 'center'}} placeholder="Search" id = "search" onPressEnter={e => this.search(e)} centerStore={e => this.userInput(e)} />
     </Header>
       </div>
       <div className= "SearchForm" style = {{paddingTop: '8%'}}>
@@ -289,8 +289,8 @@ render() {
           <Col>
           <div><strong>Search by Start Year and/or End Year</strong></div>
           <br/>
-          <Search style={{ width: 350}} type="number"  placeholder="Start Year" id= "startYear" userInput={e => this.userInput(e)}/>
-          <Search style={{ width: 350}} type="number" placeholder="End Year" id= "endYear" userInput={e => this.userInput(e)}/>
+          <Search style={{ width: 350}} type="number"  placeholder="Start Year" id= "startYear" centerStore={e => this.userInput(e)}/>
+          <Search style={{ width: 350}} type="number" placeholder="End Year" id= "endYear" centerStore={e => this.userInput(e)}/>
           <div><strong>Search by NASA Centers</strong></div>
           <br/>
           <Select defaultValue="All" style={{ width: 300 }} options={options} id = "center">
@@ -322,7 +322,7 @@ render() {
       {pics}
       {(this.state.searchData != "" && this.state.searchData != "null")
       ?<Modal
-        title="Modal"
+        title="Basic Modal"
         visible={this.state.visible}
         onOk={this.handleYes}
         onCancel={this.handleNo}
