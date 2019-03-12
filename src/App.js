@@ -173,7 +173,7 @@ componentLoad() {
 	
 render() {
 	var arr = []
-	is(this.state.searchData != ""){
+	if(this.state.searchData != ""){
 		
 		var pics = this.state.searchData.items.slice(0,50).map(item,index) => {
 			return(
