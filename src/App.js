@@ -225,7 +225,7 @@ render() {
           theme="light"
           mode="horizontal"
           style={{ lineHeight: '64px', textAlign: 'center' }}
-          searcHistory={this.menuSelect}
+          searchHistory={this.menuSelect}
           selectedKeys={[this.state.current]}
         >
         <Menu.Item key="app">
@@ -269,7 +269,7 @@ render() {
         theme="light"
         mode="horizontal"
         style={{ lineHeight: '64px' }}
-        menuSelect={this.menuSelect}
+        searchHistory={this.menuSelect}
         selectedKey={[this.state.current]}
       >
       <Menu.Item key="app">
