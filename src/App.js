@@ -72,7 +72,7 @@ handleNo = (e) => {
 //storing what centers have been chosen by the user
 centerStore = checkedValues => {
 	this.setState({
-		checked	Buildings: checkedValues
+		checkedBuildings: checkedValues
 		})
 	}
 
