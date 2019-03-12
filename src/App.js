@@ -8,7 +8,7 @@ import 'antd/dist/antd.css';
 const { Header, Content} = Layout;
 const { Meta } = Card;
 const Search = Input.Search;
-const Input = Input.Group;
+const InputGroup = Input.Group;
 const Panel = Collapse.Panel;
 const CheckGroup = Checkbox.Group;
 const Option = Select.Option;
