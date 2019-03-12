@@ -1,6 +1,10 @@
 .App {
   text-align: center;
 }
+.search {
+	padding:6px 15px 6px 30px;
+	margin:3px;
+}
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -21,6 +25,14 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.white-box {
+	background-color: white;
+}
+
+.searchItem:hover {
+	cursor: default;
 }
 
 @keyframes App-logo-spin {
