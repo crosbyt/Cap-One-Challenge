@@ -31,7 +31,7 @@ const sortOps = ["Alphabetical", "newest First", "Oldest First"]
 
 class App extends Component {
 	state = {
-		data: "",
+		searchData: "",
 		search: "",
 		spot: "",
 		seen: false,
@@ -86,13 +86,90 @@ searchCenter = center => {
 	ls.set("center", center)
 	}
 
-// selector menu
+// select menu
 menuSelect = (e) => {
 	this.setState({
 		current: e.key,
 		});
 	}
-		
+	
+// search function that requests from NASA API
+search = e => {
+	var searchWord = ""
+	searchWord = "https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image&year-start=" + ls.get("startYear") + "&year_end=" + ls.get("endYear") + "&center=" + ls.get("center")
+	axios.get(searchWord);
+	.catch((error) => {
+		console.log("Bad Request")
+		})
+	.then((res => {
+		let data = res.data;
+		this.setState({searchData: data.collection})
+		}))
+	//adds to search history (BONUS FEATURE)
+	var updatedHistory = ls.get("updatedHistory")
+	updatedHistory = JSON.parse(updatedHistory)
+	updatedHistory.push(ls.get("search"))
+	ls.set("updatedHistory", JSON.stringify(updatedHistory))
+	ls.set("startYear", "1920")
+	ls.set("endYear", "2019")
+	ls.set("center", "")
+	}
+
+//clear
+searchClear = e => {
+	var arr = []
+	ls.set("updatedHistory", JSON.stringify(arr))
+	this.setState({})
+	}
+	
+//add to favorite (BONUS FEATURE WILL ADD LATER)
+
+
+componentLoad() {
+      var arr = []
+      if(!ls.get("endYear")){
+        ls.set("startYear", "1920")
+      }
+      if(!ls.get("endYear")){
+        ls.set("endYear", "2019")
+      }
+      if(ls.get("center") == "null" || !ls.get("center")){
+        ls.set("center", "")
+      }
+      if(ls.get("updatedHistory") == "null"|| !ls.get("updatedHistory")){
+        ls.set("updatedHistory", JSON.stringify(arr))
+      }
+      if(ls.get("favorites") == "null" || !ls.get("favorites")){
+        ls.set("favorites", JSON.stringify(arr))
+      }
+      if(!ls.get("search")){
+        ls.set("search", "")
+      }
+      if(!ls.get("location")){
+        ls.set("location", "")
+      }
+      this.setState({
+
+      })
+      axios.get("https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image")
+      .catch((error) =>{
+        console.log("Bad Request")
+      })
+      .then((res => {
+      let data = res.data;
+      this.setState(
+        {
+          searchData: data.collection,
+        })
+      }))
+   }
+	
+render() {
+	
+	
+	}
+
+
 }
 
 
