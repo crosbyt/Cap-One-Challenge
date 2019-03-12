@@ -173,7 +173,8 @@ componentLoad() {
 	
 render() {
 	var arr = []
-	is(this.stat.searchData != ""){
+	is(this.state.searchData != ""){
+		
 		var pics = this.state.searchData.items.slice(0,50).map(item,index) => {
 			return(
         <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
