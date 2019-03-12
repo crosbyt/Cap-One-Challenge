@@ -97,7 +97,7 @@ menuSelect = (e) => {
 search = e => {
 	var searchWord = ""
 	searchWord = "https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image&year-start=" + ls.get("startYear") + "&year_end=" + ls.get("endYear") + "&center=" + ls.get("center")
-	axios.get(searchWord);
+	axios.get(searchWord)
 	.catch((error) => {
 		console.log("Bad Request")
 		})
