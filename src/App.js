@@ -11,7 +11,7 @@ const Search = Input.Search;
 const Input = Input.Group;
 const Panel = Collapse.Panel;
 const CheckGroup = Checkbox.Group;
-const op = Select.Option;
+const Option = Select.Option;
 
 //Different Building centers used for API
 const options = [
@@ -177,11 +177,11 @@ render() {
 		var pics = this.state.searchData.items.slice(0,50).map((item,index) => {
 			return(
         <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
-        <Card value = {index} hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showModal(index)} height="200" width="200"/>}
+        <Card value = {index} hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
           title={item.data[0].title}
-          onClick= {() => this.showModal(index)}
+          searchHistory= {() => this.showData(index)}
         />
         </Card>
         </Col>
@@ -194,11 +194,11 @@ render() {
 		var favPhotos = JSON.parse(ls.get("favorites")).reverse().map((item,index) => {
       return(
         <Col span={6}  style={{paddingTop: 10, paddingRight: 15, paddingLeft: 15}}>
-        <Card  hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showModal(index)} height="200" width="200"/>}
+        <Card  hoverable cover={<img src= {item.links[0].href} searchHistory= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
           title={item.data[0].title}
-          onClick= {() => this.showModal(index)}
+          searchHistory = {() => this.showData(index)}
         />
         </Card>
         </Col>
@@ -225,7 +225,7 @@ render() {
           theme="light"
           mode="horizontal"
           style={{ lineHeight: '64px', textAlign: 'center' }}
-          onClick={this.menuSelect}
+          searcHistory={this.menuSelect}
           selectedKeys={[this.state.current]}
         >
         <Menu.Item key="app">
@@ -307,19 +307,19 @@ render() {
              size="small"
              dataSource={JSON.parse(ls.get("updatedHistory")).reverse().slice(0,5)}
              renderItem={item => (
-               <List.Item style = {{cursor: "pointer"}} value = {item}  userInput = {() => this.searchHistory(item)}>{item}</List.Item>
+               <List.Item style = {{cursor: "pointer"}} value = {item}  searchHistory = {() => this.searchHistory(item)}>{item}</List.Item>
              )}
            />:
            <div></div>
          }
-          <Button  type="secondary" htmlType="submit" userInput = {e => this.searchClear(e)}> Clear History </Button>
+          <Button  type="secondary" htmlType="submit" searchHistory = {e => this.searchClear(e)}> Clear History </Button>
         </Panel>
       </Collapse>
       </div>
       <br/>
-      <Button  type="primary" htmlType="submit" userInput = {e => this.search(e)}> Submit </Button>
+      <Button  type="primary" htmlType="submit" searchHistory = {e => this.search(e)}> Submit </Button>
       </div>
-      {photos}
+      {pics}
       {(this.state.searchData != "" && this.state.searchData != "null")
       ?<Modal
         title="Modal"
@@ -338,7 +338,7 @@ render() {
         :<p>Description: {this.state.searchData.items[this.state.currentPic].data[0].description} </p>
         }
         <div style= {{textAlign: "center"}}>
-        <Button icon="star" userInput = {e => this.addFav(e)}>Add to Favorites</Button>
+        <Button icon="star" searchHistory = {e => this.addFav(e)}>Add to Favorites</Button>
         </div>
       </Modal>:
       <div/>
