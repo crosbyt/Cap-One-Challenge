@@ -392,7 +392,7 @@ clearSort = e => {
         <div style = {{paddingBottom: "2%"}}>
         <Button type="primary" htmlType="submit" onClick = {e => this.sortData(e)} >Update Results</Button>
         </div>
-        <Button type="secondary" htmlType"submit" onClick = {e => this.clearSort(e)} >Clear Filters</Button>
+        <Button type="secondary" htmlType="submit" onClick = {e => this.clearSort(e)} >Clear Filters</Button>
         </Col>
         </Panel>
       </Collapse>
