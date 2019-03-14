@@ -265,7 +265,7 @@ handleOk = (e) => {
           selectedKeys={[this.state.current]}
         >
         <Menu.Item key="app">
-          <Icon type="camera" />Home Page
+          <Icon type="house" />Home Page
         </Menu.Item>
         <Menu.Item key="favorite">
           <Icon type="star" />Favorite Images
