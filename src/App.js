@@ -37,6 +37,8 @@ class App extends Component {
       currentItem: 0,
       currentFav: 0,
       checkedCenters: [],
+      dateFeature: false,
+      sortedDateData: []
   }
 
 showData = (index) => {
@@ -71,6 +73,21 @@ handleOk = (e) => {
   userInput = e => {
     ls.set(e.target.id, e.target.value)
   };
+  
+  sortData = e => {
+    var sortArr = [];
+    for (var key in this.state.nasaData.items) {
+        sortArr.push({key:key,date:this.state.searchData.items[key].data[0].date_created});
+    }
+    sortArr.sort(function(a,b){
+    return new Date(b.date) - new Date(a.date);
+    });
+    this.setState({
+      sortedDateData: sort_array,
+      dateFeature:true
+    })
+    console.log(sortArr)
+  }
  
   onChange = checkedValues => {
     this.setState({
@@ -177,6 +194,22 @@ handleOk = (e) => {
   render() {
     var arr = []
     if(this.state.searchData != ""){
+    cosole.log(this.state.searchData)
+    if(this.state.dateFeature){
+	 var photos = this.state.sortedDateData.map((item,index) => {
+		 return(
+		 <Col span={6} style={{paddingTop: 15, paddingRight: 20, paddingLeft:20}}>
+		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(praseInt(item.key))} height="200" width="200"/>}
+		 >
+		 <Meta
+		 title={this.state.searchData.items[item.key].data[0].title}
+		 onClick= {() => this.showData(parseInt(item.key))}
+		 />
+		 </Card>
+		 </Col>
+		 )})
+		 }
+	else{
     var photos = this.state.searchData.items.slice(0, 50).map((item,index) => {
           return(
         <Col span={6}  style={{paddingTop: 15, paddingRight: 20, paddingLeft: 20}}>
@@ -189,6 +222,7 @@ handleOk = (e) => {
         </Card>
         </Col>
       )})
+    }
     }
     else{
       var photos = null
