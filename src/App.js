@@ -382,7 +382,7 @@ clearSort = e => {
            />:
            <div></div>
          }
-          <Button  type="secondary" htmlType"submit" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
+          <Button  type="secondary" htmlType="submit" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
         </Panel>
         <Panel header= "Filter Results" key="2">
         <Col>
