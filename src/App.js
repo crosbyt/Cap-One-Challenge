@@ -273,6 +273,11 @@ handleOk = (e) => {
         <Option value={option.value} onClick= {() => this.searchCenter(option.value)} >{option.label}</Option>
       )}
     )
+    var sorts = sortOptions.map(option => {
+	    return(
+	    <Option value={option} onClick={() => this.searchCenter(option)} >{option}</Option>
+	    )
+	    })
     if(this.state.current == "favorite"){
       return (
         <div>
