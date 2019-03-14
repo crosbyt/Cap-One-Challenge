@@ -3,7 +3,7 @@ import './App.css';
 import SearchDisplay from './SearchDisplay.js';
 import axios from 'axios';
 import ls from 'local-storage'
-import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select, BackTop} from 'antd';
+import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select, PageHeader, BackTop} from 'antd';
 import 'antd/dist/antd.css';
 import { Twitter, Facebook, Google } from 'react-social-sharing'
 const { Header, Content} = Layout;
@@ -61,6 +61,7 @@ showData = (index) => {
 
 //Modal Button Function
 handleOk = (e) => {
+	console.log("modal type: " + e.targer.id)	
    this.setState({
      visible: false,
    });
