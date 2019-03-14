@@ -81,6 +81,30 @@ handleOk = (e) => {
   userInput = e => {
     ls.set(e.target.id, e.target.value)
   };
+  	 
+ 
+  onChange = checkedValues => {
+    this.setState({
+      checkedCenters: checkedValues
+    })
+  }
+
+  onClick = item => {
+    ls.set("search", item)
+    this.search()
+  }
+
+  //Menu selector
+  menuSelect = (e) => {
+    this.setState({
+      current: e.key,
+    });
+  }
+
+  //Which center to search for
+  searchCenter = center => {
+    ls.set("center", center)
+  }
   
   sortData = e => {
     var sortArr = [];
@@ -109,30 +133,12 @@ handleOk = (e) => {
 		})
 	}
 }
-	 
- 
-  onChange = checkedValues => {
-    this.setState({
-      checkedCenters: checkedValues
-    })
-  }
 
-  onClick = item => {
-    ls.set("search", item)
-    this.search()
-  }
-
-  //Menu selector
-  menuSelect = (e) => {
-    this.setState({
-      current: e.key,
-    });
-  }
-
-  //Which center to search for
-  searchCenter = center => {
-    ls.set("center", center)
-  }
+clearSort = e => {
+	this.setState({
+		dateFeature:false
+		})
+	}
 
 
   //Search function
@@ -197,6 +203,9 @@ handleOk = (e) => {
       if(!ls.get("location")){
         ls.set("location", "")
       }
+      if(!ls.get("sort")){
+	      ls.set("sort", "")
+	      }
       this.setState({
 
       })
@@ -234,7 +243,7 @@ handleOk = (e) => {
 	else{
     var photos = this.state.searchData.items.slice(0, 50).map((item,index) => {
           return(
-        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.5", paddingLeft: "1.5%"}}>
+        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4", paddingLeft: "1.4%"}}>
         <Card value = {index} hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -252,7 +261,7 @@ handleOk = (e) => {
     if(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr)){
     var favPhotos = JSON.parse(ls.get("favorites")).reverse().map((item,index) => {
       return(
-        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.5%", paddingLeft: "1.5%"}}>
+        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft: "1.4%"}}>
         <Card  hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -281,7 +290,7 @@ handleOk = (e) => {
     if(this.state.current == "favorite"){
       return (
         <div>
-        <Header style= {{position: 'fixed', zIndex: 1, }}>
+        <Header style= {{position: 'fixed', zIndex: 1}}>
         <div className="logo" />
         <Menu
           theme="light"
