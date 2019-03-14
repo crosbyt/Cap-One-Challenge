@@ -254,7 +254,7 @@ handleOk = (e) => {
     if(this.state.current == "favorite"){
       return (
         <div>
-        <Header style= {{position: 'fixed', zIndex: 1, width: '100%'}}>
+        <Header style= {{position: 'fixed', zIndex: 1, }}>
         <div className="logo" />
         <Menu
           theme="light"
