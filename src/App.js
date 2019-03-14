@@ -265,10 +265,10 @@ handleOk = (e) => {
           selectedKeys={[this.state.current]}
         >
         <Menu.Item key="app">
-          <Icon type="house" />Home Page
+          <Icon type="home" />Home Page
         </Menu.Item>
         <Menu.Item key="favorite">
-          <Icon type="star" />Favorite Images
+          <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
         </Menu.Item>
         </Menu>
       </Header>
@@ -309,10 +309,10 @@ handleOk = (e) => {
         selectedKeys={[this.state.current]}
       >
       <Menu.Item key="app">
-        <Icon type="house" />Home Page
+        <Icon type="home" />Home Page
       </Menu.Item>
       <Menu.Item key="favorite">
-        <Icon type="star" />Favorite Images
+        <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
       </Menu.Item>
       </Menu>
       <Search style={{ width: 400, textAlign: 'center'}} placeholder="Search" id = "search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
@@ -374,7 +374,7 @@ handleOk = (e) => {
         :<p>Description: {this.state.searchData.items[this.state.currentItem].data[0].description} </p>
         }
         <div style= {{textAlign: "center"}}>
-        <Button icon="star" onClick = {e => this.addFav(e)}>Add to Favorites</Button>
+        <Button icon="heart" onClick = {e => this.addFav(e)}>Add to Favorites</Button>
         </div>
       </Modal>:
       <div/>
