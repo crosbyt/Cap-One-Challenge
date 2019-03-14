@@ -35,6 +35,7 @@ class App extends Component {
       search: "",
       location: "",
       visible: false,
+      infoVisible: false,
       currentItem: 0,
       currentFav: 0,
       checkedCenters: [],
@@ -65,7 +66,7 @@ handleOk = (e) => {
    });
  }
  
- changeSort = value => {
+changeSort = value => {
 	 this.setState({
 		 filterSort: value
 		 })
@@ -77,6 +78,19 @@ handleOk = (e) => {
      visible: false,
    });
  }
+ 
+handleInfoOk = (e) => {
+   console.log("modal type: " + e.target.id)
+    this.setState({
+      infoVisible: false,
+    });
+  }
+  
+ handleInfoCancel = (e) => {
+    this.setState({
+      infoVisible: false,
+    });
+  }
 
   userInput = e => {
     ls.set(e.target.id, e.target.value)
@@ -106,35 +120,32 @@ handleOk = (e) => {
     ls.set("center", center)
   }
   
+  searchCenter = option => {
+	  ls.set("sort", option)
+	  }
+  
   sortData = e => {
     var sortArr = [];
+    for(var key in this.state.searchData.items) {
+	    sortArr.push({key:key,title:this.state.searchData.items[key].data[0].title, date:this.state.searchData.items[key].data[0].date_created});
+	    }
     if(this.state.filterSort == "Newest First"){
-    for (var key in this.state.nasaData.items) {
-        sortArr.push({key:key,date:this.state.searchData.items[key].data[0].date_created});
-    }
     sortArr.sort(function(a,b){
     return new Date(b.date) - new Date(a.date);
     });
-    this.setState({
-      sortedDateData: sortArr,
-      dateFeature:true
-    })
-  }
+    }
   else if(this.state.filterSort == "Oldest First"){
-	  for(var key in this.state.searchData.items) {
-		  sortArr.push({key:key,data:this.state.searchData.items[key].data[0].date_created});
-		  }
 		sortArr.sort(function(a,b){
 		return new Date(b.date) - new Date(a.date);
      	  });
+     	 }
 		this.setState({
-			sortedDateData: sortArr.reverse(),
+			sortedDateData: sortArr,
 			dateFeature: true
 		})
 	}
-}
 
-clearSort = e => {
+	clearSort = e => {
 	this.setState({
 		dateFeature:false
 		})
@@ -209,6 +220,7 @@ clearSort = e => {
       this.setState({
 
       })
+      
       axios.get("https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image")
       .catch((error) =>{
         console.log("Bad Request")
@@ -225,11 +237,10 @@ clearSort = e => {
   render() {
     var arr = []
     if(this.state.searchData != ""){
-    console.log(this.state.searchData)
     if(this.state.dateFeature){
 	 var photos = this.state.sortedDateData.map((item,index) => {
 		 return(
-		 <Col span={6} style={{paddingTop: "1%", paddingRight: "1.5%", paddingLeft:"1.5%"}}>
+		 <Col span={6} style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft:"1.4%"}}>
 		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(parseInt(item.key))} height="200" width="200"/>}
 		 >
 		 <Meta
@@ -398,12 +409,14 @@ clearSort = e => {
       </Collapse>
       </div>
       <br/>
-      <Button type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
+      <Button type="primary" htmlType="submit" onClick = {e => this.search(e)}> Search </Button>
       </div>
+      <div className = "picGrid">
       {photos}
+      </div>
       {(this.state.searchData != "" && this.state.searchData != "null")
       ?<Modal
-        title="Basic Modal"
+      	id= "visible"
         visible={this.state.visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
@@ -426,8 +439,15 @@ clearSort = e => {
         <Google link={this.state.searchData.items[this.state.currentItem].links[0].href} />
         </div>
       </Modal>:
-      <div/>
+      <div></div>
       }
+      <Modal
+      id= "infoVisible"
+      visible={this.state.infoVisible}
+      onOk={this.handleInfoOk}
+      onCancel={this.handleInfoCancel}
+      >
+      </Modal>
       </div>
     );
   }
