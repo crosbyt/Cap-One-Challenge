@@ -329,7 +329,6 @@ clearSort = e => {
       )
     }
     var arr = []
-    console.log((this.state.searchData.items))
     return (
       <div className="App">
       <BackTop />
@@ -383,20 +382,23 @@ clearSort = e => {
            />:
            <div></div>
          }
-          <Button  type="secondary" icon="search" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
+          <Button  type="secondary" htmlType"submit" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
         </Panel>
         <Panel header= "Filter Results" key="2">
         <Col>
-        <Select defaultValue="None" style={{ width: "95%", paddingBottom: "3%"}} id = "sort" onChange={this.changeSort} >
+        <Select defaultValue="None" style={{ width: "95%", paddingBottom: "2%"}} id = "sort" onChange={this.changeSort} >
         {sorts}
         </Select>
-        <Button type="secondary" icon="search" onClick = {e => this.sortData(e)} >Filter Search</Button>
+        <div style = {{paddingBottom: "2%"}}>
+        <Button type="primary" htmlType="submit" onClick = {e => this.sortData(e)} >Update Results</Button>
+        </div>
+        <Button type="secondary" htmlType"submit" onClick = {e => this.clearSort(e)} >Clear Filters</Button>
         </Col>
         </Panel>
       </Collapse>
       </div>
       <br/>
-      <Button  type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
+      <Button type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
       </div>
       {photos}
       {(this.state.searchData != "" && this.state.searchData != "null")
