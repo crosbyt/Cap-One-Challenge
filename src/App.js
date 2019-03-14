@@ -61,7 +61,7 @@ showData = (index) => {
 
 //Modal Button Function
 handleOk = (e) => {
-	console.log("modal type: " + e.targer.id)	
+	console.log("modal type: " + e.target.id)	
    this.setState({
      visible: false,
    });
