@@ -372,7 +372,7 @@ handleOk = (e) => {
           <Button  type="secondary" icon="search" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
         </Panel>
         <Panel header= "Filter Results" key="2">
-        <col>
+        <Col>
         <Select defaultValue="None" style={{ width: "95%", paddingBottom: "3%"}} id = "sort" onChange={this.changeSort} >
         {sorts}
         </Select>
