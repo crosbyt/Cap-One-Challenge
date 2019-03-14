@@ -3,8 +3,9 @@ import './App.css';
 import SearchDisplay from './SearchDisplay.js';
 import axios from 'axios';
 import ls from 'local-storage'
-import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select} from 'antd';
+import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select, BackTop} from 'antd';
 import 'antd/dist/antd.css';
+import { Twitter, Facebook, Google } from 'react-social-sharing'
 const { Header, Content} = Layout;
 const { Meta } = Card;
 const InputGroup = Input.Group;
@@ -26,7 +27,7 @@ const options = [
   { label: 'Armstrong Flight Research Center (ARFC)', value: 'ARFC' },
 ];
 
-const sortOptions = ["Newest First", "Oldest First", "Alphabetical"]
+const sortOptions = ["Newest First", "Oldest First"]
 
 class App extends Component {
   state = {
@@ -37,6 +38,7 @@ class App extends Component {
       currentItem: 0,
       currentFav: 0,
       checkedCenters: [],
+      filterSort: "",
       dateFeature: false,
       sortedDateData: []
   }
@@ -62,6 +64,12 @@ handleOk = (e) => {
      visible: false,
    });
  }
+ 
+ changeSort = value => {
+	 this.setState({
+		 filterSort: value
+		 })
+		}
 
  //Modal Button Function
  handleCancel = (e) => {
@@ -76,6 +84,7 @@ handleOk = (e) => {
   
   sortData = e => {
     var sortArr = [];
+    if(this.state.filterSort == "Newest First"){
     for (var key in this.state.nasaData.items) {
         sortArr.push({key:key,date:this.state.searchData.items[key].data[0].date_created});
     }
@@ -86,8 +95,21 @@ handleOk = (e) => {
       sortedDateData: sortArr,
       dateFeature:true
     })
-    console.log(sortArr)
   }
+  else if(this.state.filterSort == "Oldest First"){
+	  for(var key in this.state.searchData.items) {
+		  sortArr.push({key:key,data:this.state.searchData.items[key].data[0].date_created});
+		  }
+		sortArr.sort(function(a,b){
+		return new Date(b.date) - new Date(a.date);
+     	  });
+		this.setState({
+			sortedDateData: sortArr.reverse(),
+			dateFeature: true
+		})
+	}
+}
+	 
  
   onChange = checkedValues => {
     this.setState({
@@ -198,7 +220,7 @@ handleOk = (e) => {
     if(this.state.dateFeature){
 	 var photos = this.state.sortedDateData.map((item,index) => {
 		 return(
-		 <Col span={6} style={{paddingTop: 15, paddingRight: 20, paddingLeft:20}}>
+		 <Col span={6} style={{paddingTop: "1%", paddingRight: "1.5%", paddingLeft:"1.5%"}}>
 		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(parseInt(item.key))} height="200" width="200"/>}
 		 >
 		 <Meta
@@ -212,7 +234,7 @@ handleOk = (e) => {
 	else{
     var photos = this.state.searchData.items.slice(0, 50).map((item,index) => {
           return(
-        <Col span={6}  style={{paddingTop: 15, paddingRight: 20, paddingLeft: 20}}>
+        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.5", paddingLeft: "1.5%"}}>
         <Card value = {index} hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -230,7 +252,7 @@ handleOk = (e) => {
     if(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr)){
     var favPhotos = JSON.parse(ls.get("favorites")).reverse().map((item,index) => {
       return(
-        <Col span={6}  style={{paddingTop: 15, paddingRight: 20, paddingLeft: 20}}>
+        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.5%", paddingLeft: "1.5%"}}>
         <Card  hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
         >
         <Meta
@@ -296,6 +318,7 @@ handleOk = (e) => {
     console.log((this.state.searchData.items))
     return (
       <div className="App">
+      <BackTop />
       <div style= {{position: 'fixed', width: '100%', zIndex: 1}}>
       <Header style = {{width: '100%'}}>
       <div className="logo" />
@@ -313,21 +336,21 @@ handleOk = (e) => {
         <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
       </Menu.Item>
       </Menu>
-      <Search style={{ width: 400, textAlign: 'center'}} placeholder="Search" id = "search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
+      <Search style={{ width: "30%", textAlign: 'center'}} placeholder="Search" id = "Search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
     </Header>
       </div>
-      <div className= "SearchForm" style = {{paddingTop: '8%'}}>
+      <div className= "SearchForm" style = {{paddingTop: '8%', zIndex: 2}}>
       <div className= "MoreOptions" style = {{paddingLeft: "35.4%", paddingTop: "1%"}}>
-      <Collapse  defaultActiveKey={['0']} style={{ width: 400}}>
+      <Collapse  defaultActiveKey={['0']} style={{ width: "45%"}}>
         <Panel header="More Search Options" key="1">
           <Col>
           <div><strong>Search by Start Year and/or End Year</strong></div>
           <br/>
-          <Search style={{ width: 350}} type="number"  placeholder="Start Year" id= "startYear" onChange={e => this.userInput(e)}/>
-          <Search style={{ width: 350}} type="number" placeholder="End Year" id= "endYear" onChange={e => this.userInput(e)}/>
+          <Search style={{ width: "95%"}} type="number"  placeholder="Start Year" id= "startYear" onChange={e => this.userInput(e)}/>
+          <Search style={{ width: "95%"}} type="number" placeholder="End Year" id= "endYear" onChange={e => this.userInput(e)}/>
           <div><strong>Search by NASA Centers</strong></div>
           <br/>
-          <Select defaultValue="All" style={{ width: 300 }} options={options} id = "center">
+          <Select defaultValue="All" style={{ width: "95%"}} options={options} id = "center">
           {centers}
           </Select>
           </Col>
@@ -347,6 +370,14 @@ handleOk = (e) => {
            <div></div>
          }
           <Button  type="secondary" icon="search" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
+        </Panel>
+        <Panel header= "Filter Results" key="2">
+        <col>
+        <Select defaultValue="None" style={{ width: "95%", paddingBottom: "3%"}} id = "sort" onChange={this.changeSort} >
+        {sorts}
+        </Select>
+        <Button type="secondary" icon="search" onClick = {e => this.sortData(e)} >Filter Search</Button>
+        </Col>
         </Panel>
       </Collapse>
       </div>
@@ -373,6 +404,10 @@ handleOk = (e) => {
         }
         <div style= {{textAlign: "center"}}>
         <Button icon="heart" onClick = {e => this.addFav(e)}>Add to Favorites</Button>
+        <br/>
+        <Facebook link={this.state.searchData.items[this.state.currentItem].links[0].href} />
+        <Twitter link={this.state.searchData.items[this.state.currentItem].links[0].href} />
+        <Google link={this.state.searchData.items[this.state.currentItem].links[0].href} />
         </div>
       </Modal>:
       <div/>
