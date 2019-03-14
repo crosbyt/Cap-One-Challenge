@@ -83,7 +83,7 @@ handleOk = (e) => {
     return new Date(b.date) - new Date(a.date);
     });
     this.setState({
-      sortedDateData: sort_array,
+      sortedDateData: sortArr,
       dateFeature:true
     })
     console.log(sortArr)
@@ -194,12 +194,12 @@ handleOk = (e) => {
   render() {
     var arr = []
     if(this.state.searchData != ""){
-    cosole.log(this.state.searchData)
+    console.log(this.state.searchData)
     if(this.state.dateFeature){
 	 var photos = this.state.sortedDateData.map((item,index) => {
 		 return(
 		 <Col span={6} style={{paddingTop: 15, paddingRight: 20, paddingLeft:20}}>
-		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(praseInt(item.key))} height="200" width="200"/>}
+		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(parseInt(item.key))} height="200" width="200"/>}
 		 >
 		 <Meta
 		 title={this.state.searchData.items[item.key].data[0].title}
