@@ -254,8 +254,7 @@ handleOk = (e) => {
     if(this.state.current == "favorite"){
       return (
         <div>
-        <div style= {{position: 'fixed', width: '100%', zIndex: 1}}>
-        <Header>
+        <Header style= {{position: 'fixed', zIndex: 1, width: '100%'}}>
         <div className="logo" />
         <Menu
           theme="light"
@@ -348,12 +347,12 @@ handleOk = (e) => {
            />:
            <div></div>
          }
-          <Button  type="secondary" htmlType="submit" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
+          <Button  type="secondary" icon="search" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
         </Panel>
       </Collapse>
       </div>
       <br/>
-      <Button  type="primary" htmlType="submit" onClick = {e => this.search(e)}> Submit </Button>
+      <Button  type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
       </div>
       {photos}
       {(this.state.searchData != "" && this.state.searchData != "null")
