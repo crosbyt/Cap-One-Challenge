@@ -270,8 +270,7 @@ handleOk = (e) => {
           <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
         </Menu.Item>
         </Menu>
-      </Header>
-        </div>
+        </Header>
         <div style = {{paddingTop: '5%'}}>
         {favPhotos}
         </div>
