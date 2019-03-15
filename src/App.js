@@ -3,7 +3,7 @@ import './App.css';
 import SearchDisplay from './SearchDisplay.js';
 import axios from 'axios';
 import ls from 'local-storage'
-import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select, PageHeader, BackTop} from 'antd';
+import { Input, InputNumber,  Button, Col, Card, Modal, Layout, Collapse, DatePicker, Row, Checkbox, Menu, Icon, List, Select, PageHeader, BackTop, message} from 'antd';
 import 'antd/dist/antd.css';
 import { Twitter, Facebook, Google } from 'react-social-sharing'
 const { Header, Content} = Layout;
@@ -174,6 +174,12 @@ handleInfoOk = (e) => {
     ls.set("endYear", "2019")
     ls.set("center", "")
   }
+  
+  badSearch = e => {
+	  message.warning('Search Had No Results! Showing Default.');
+	  ls.set("search", "")
+	  this.search()
+	  }
 
   //Clears history
   clearSearch = e => {
@@ -238,6 +244,10 @@ handleInfoOk = (e) => {
   render() {
     var arr = []
     if(this.state.searchData != ""){
+	    if(this.state.searchData.metadata.total_hits == 0){
+        this.badSearch();
+      }
+
     if(this.state.dateFeature){
 	 var photos = this.state.sortedDateData.map((item,index) => {
 		 return(
@@ -302,7 +312,8 @@ handleInfoOk = (e) => {
     if(this.state.current == "favorite"){
       return (
         <div>
-        <Header style= {{position: 'fixed', zIndex: 1}}>
+        <div style= {{position: 'fixed', width: '100%' zIndex: 1}}>
+        <Header>
         <div className="logo" />
         <Menu
           theme="light"
@@ -361,7 +372,7 @@ handleInfoOk = (e) => {
         <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
       </Menu.Item>
       </Menu>
-      <Search style={{ width: "30%", textAlign: 'center'}} placeholder="Search" id = "Search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
+      <Search style={{ width: "30%", textAlign: 'center'}} placeholder="Search" id = "search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
     </Header>
       </div>
       <div className= "SearchForm" style = {{paddingTop: '8%', zIndex: 2}}>
@@ -415,7 +426,7 @@ handleInfoOk = (e) => {
       <div className = "picGrid">
       {photos}
       </div>
-      {(this.state.searchData != "" && this.state.searchData != "null")
+      {(this.state.searchData != "" && this.state.searchData != "null" && this.state.nasaData.metadata.total_hits != 0))
       ?<Modal
       	id= "visible"
         visible={this.state.visible}
