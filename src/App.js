@@ -13,7 +13,6 @@ const Search = Input.Search;
 const Panel = Collapse.Panel;
 const CheckboxGroup = Checkbox.Group;
 const Option = Select.Option;
-
 const options = [
   { label: 'All', value: '' },
   { label: 'Jet Propulsion Laboratory (JPL)', value: 'JPL' },
@@ -29,6 +28,8 @@ const options = [
 
 const sortOptions = ["Newest First", "Oldest First"]
 
+const yearPattern = /^(19|20)\d{2}$/
+
 class App extends Component {
   state = {
       searchData: "",
@@ -39,12 +40,14 @@ class App extends Component {
       currentItem: 0,
       currentFav: 0,
       checkedCenters: [],
-      filterSort: "",
-      dateFeature: false,
-      sortedDateData: []
+      dateFilter: false,
+      sort: "",
+      sortedDate: []
   }
 
-showData = (index) => {
+
+//opening Modal 
+showModal = (index) => {
   if(this.state.current == "favorite"){
     this.setState({
       visible: true,
@@ -59,105 +62,114 @@ showData = (index) => {
 }
 }
 
-//Modal Button Function
+//Function for opening  Info
+showInfoModal = (e) => {
+  this.setState({
+    infoVisible:true
+  })
+}
+
 handleOk = (e) => {
-	console.log("modal type: " + e.target.id)	
+  console.log("modal type: " + e.target.id)
    this.setState({
      visible: false,
    });
  }
- 
-changeSort = value => {
-	 this.setState({
-		 filterSort: value
-		 })
-		}
 
- //Modal Button Function
  handleCancel = (e) => {
    this.setState({
      visible: false,
    });
  }
- 
-handleInfoOk = (e) => {
+
+ handleInfoOk = (e) => {
    console.log("modal type: " + e.target.id)
     this.setState({
       infoVisible: false,
     });
   }
-  
- handleInfoCancel = (e) => {
+
+  handleInfoCancel = (e) => {
     this.setState({
       infoVisible: false,
     });
   }
 
   userInput = e => {
+    console.log(yearPattern.test( e.target.value))
     ls.set(e.target.id, e.target.value)
   };
-  	 
- 
+
   onChange = checkedValues => {
     this.setState({
       checkedCenters: checkedValues
     })
   }
 
+  handleChange = value => {
+    this.setState({
+      sort: value
+    })
+  }
   onClick = item => {
     ls.set("search", item)
     this.search()
   }
 
-  //Menu selector
-  menuSelect = (e) => {
+  handleClick = (e) => {
     this.setState({
       current: e.key,
     });
+    window.scrollTo(0, 0);
   }
 
-  //Which center to search for
-  searchCenter = center => {
+  changeCenter = center => {
     ls.set("center", center)
   }
-  
-  searchCenter = option => {
-	  ls.set("sort", option)
-	  }
-  
+
+  changeSort = option => {
+    ls.set("sort", option)
+  }
+
+
   sortData = e => {
     var sortArr = [];
-    for(var key in this.state.searchData.items) {
-	    sortArr.push({key:key,title:this.state.searchData.items[key].data[0].title, date:this.state.searchData.items[key].data[0].date_created});
-	    }
-    if(this.state.filterSort == "Newest First"){
+    for (var key in this.state.searchData.items) {
+        sortArr.push({key:key,title:this.state.searchData.items[key].data[0].title, date:this.state.searchData.items[key].data[0].date_created});
+    }
+    if(this.state.sort == "Newest First"){
     sortArr.sort(function(a,b){
     return new Date(b.date) - new Date(a.date);
     });
     }
-  else if(this.state.filterSort == "Oldest First"){
-		sortArr.sort(function(a,b){
-		return new Date(b.date) - new Date(a.date);
-     	  });
-     	 }
-		this.setState({
-			sortedDateData: sortArr,
-			dateFeature: true
-		})
-	}
+    else if(this.state.sort == "Oldest First"){
+    sortArr.sort(function(a,b){
+    return new Date(a.date) - new Date(b.date);
+    });
+    }
+    this.setState({
+      sortedDate: sortArr,
+      dateFilter:true
+    })
+  }
 
-	clearSort = e => {
-	this.setState({
-		dateFeature:false
-		})
-	}
+  clearSort = e => {
+    this.setState({
+      dateFilter:false
+    })
+  }
 
-
-  //Search function
   search = e => {
     var searchWord = ""
     //API Request
+    if(!yearPattern.test(ls.get("startYear"))){
+      ls.set("startYear", "1920")
+    }
+    if(!yearPattern.test(ls.get("endYear"))){
+      ls.set("endYear", "2019")
+    }
     searchWord = "https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image&year_start=" + ls.get("startYear") + "&year_end=" + ls.get("endYear") + "&center=" + ls.get("center")
+    console.log(searchWord)
     axios.get(searchWord)
     .catch((error) =>{
       console.log("Bad Request")
@@ -168,27 +180,40 @@ handleInfoOk = (e) => {
     }))
     var searchHistory = ls.get("searchHistory")
     searchHistory = JSON.parse(searchHistory)
-    searchHistory.push(ls.get("search"))
+    if(searchHistory[searchHistory.length-1] != ls.get("search")){
+      searchHistory.push(ls.get("search"))
+    }
     ls.set("searchHistory", JSON.stringify(searchHistory))
     ls.set("startYear", "1920")
     ls.set("endYear", "2019")
     ls.set("center", "")
   }
-  
-  badSearch = e => {
-	  message.warning('Search Had No Results! Showing Default.');
-	  ls.set("search", "")
-	  this.search()
-	  }
 
-  //Clears history
+  badCall = e => {
+    var searchHistory = ls.get("searchHistory")
+    searchHistory = JSON.parse(searchHistory)
+    message.warning('No Results! Showing Default Images.');
+    if(searchHistory.length > 1){
+      ls.set("search", searchHistory[searchHistory.length-2])
+    }
+    else(
+      ls.set("search","")
+    )
+    this.search()
+  }
+
   clearSearch = e => {
-    var arr = []
-    ls.set("searchHistory", JSON.stringify(arr))
+    var array = []
+    ls.set("searchHistory", JSON.stringify(array))
     this.setState({})
   }
 
-  addFav = e => {
+  clearFavorites= e => {
+    var array = []
+    ls.set("favorites", JSON.stringify(array))
+    this.setState({})
+  }
+  addFavorite = e => {
     if(this.state.searchData != ""){
       var favorites = ls.get("favorites")
       favorites = JSON.parse(favorites)
@@ -198,9 +223,8 @@ handleInfoOk = (e) => {
   }
 
   componentDidMount() {
-      var arr = []
-    
-      if(!ls.get("endYear")){
+      var array = []
+      if(!ls.get("startYear")){
         ls.set("startYear", "1920")
       }
       if(!ls.get("endYear")){
@@ -210,10 +234,10 @@ handleInfoOk = (e) => {
         ls.set("center", "")
       }
       if(ls.get("searchHistory") == "null"|| !ls.get("searchHistory")){
-        ls.set("searchHistory", JSON.stringify(arr))
+        ls.set("searchHistory", JSON.stringify(array))
       }
       if(ls.get("favorites") == "null" || !ls.get("favorites")){
-        ls.set("favorites", JSON.stringify(arr))
+        ls.set("favorites", JSON.stringify(array))
       }
       if(!ls.get("search")){
         ls.set("search", "")
@@ -222,12 +246,11 @@ handleInfoOk = (e) => {
         ls.set("location", "")
       }
       if(!ls.get("sort")){
-	      ls.set("sort", "")
-	      }
+        ls.set("sort", "")
+      }
       this.setState({
 
       })
-      
       axios.get("https://images-api.nasa.gov/search?q=" + ls.get("search") + "&media_type=image")
       .catch((error) =>{
         console.log("Bad Request")
@@ -242,35 +265,35 @@ handleInfoOk = (e) => {
 }
 
   render() {
-    var arr = []
+    var array = []
     if(this.state.searchData != ""){
-	    if(this.state.searchData.metadata.total_hits == 0){
-        this.badSearch();
+      console.log(ls.get("searchHistory"))
+      if(this.state.searchData.metadata.total_hits == 0){
+        this.badCall();
       }
-
-    if(this.state.dateFeature){
-	 var photos = this.state.sortedDateData.map((item,index) => {
-		 return(
-		 <Col span={6} style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft:"1.4%"}}>
-		 <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showData(parseInt(item.key))} height="200" width="200"/>}
-		 >
-		 <Meta
-		 title={this.state.searchData.items[item.key].data[0].title}
-		 onClick= {() => this.showData(parseInt(item.key))}
-		 />
-		 </Card>
-		 </Col>
-		 )})
-		 }
-	else{
-    var photos = this.state.searchData.items.slice(0, 50).map((item,index) => {
+    if(this.state.dateFilter && this.state.searchData.metadata.total_hits != 0){
+      var photos = this.state.sortedDate.map((item,index) => {
+            return(
+          <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft: "1.4%"}}>
+          <Card value = {parseInt(item.key)} hoverable cover={<img src= {this.state.searchData.items[item.key].links[0].href} onClick= {() => this.showModal(parseInt(item.key))} height="200" width="200"/>}
+          >
+          <Meta
+            title={this.state.searchData.items[item.key].data[0].title}
+            onClick= {() => this.showModal(parseInt(item.key))}
+          />
+          </Card>
+          </Col>
+        )})
+    }
+    else{
+    var photos = this.state.searchData.items.map((item,index) => {
           return(
-        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4", paddingLeft: "1.4%"}}>
-        <Card value = {index} hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
+        <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft: "1.4%"}}>
+        <Card value = {index} hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showModal(index)} height="200" width="200"/>}
         >
         <Meta
           title={item.data[0].title}
-          onClick= {() => this.showData(index)}
+          onClick= {() => this.showModal(index)}
         />
         </Card>
         </Col>
@@ -280,15 +303,15 @@ handleInfoOk = (e) => {
     else{
       var photos = null
     }
-    if(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr)){
+    if(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(array)){
     var favPhotos = JSON.parse(ls.get("favorites")).reverse().map((item,index) => {
       return(
         <Col span={6}  style={{paddingTop: "1%", paddingRight: "1.4%", paddingLeft: "1.4%"}}>
-        <Card  hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showData(index)} height="200" width="200"/>}
+        <Card  hoverable cover={<img src= {item.links[0].href} onClick= {() => this.showModal(index)} height="200" width="200"/>}
         >
         <Meta
           title={item.data[0].title}
-          onClick= {() => this.showData(index)}
+          onClick= {() => this.showModal(index)}
         />
         </Card>
         </Col>
@@ -301,14 +324,16 @@ handleInfoOk = (e) => {
 
     var centers = options.map(option => {
       return(
-        <Option value={option.value} onClick= {() => this.searchCenter(option.value)} >{option.label}</Option>
+        <Option value={option.value} onClick= {() => this.changeCenter(option.value)} >{option.label}</Option>
       )}
     )
+
     var sorts = sortOptions.map(option => {
-	    return(
-	    <Option value={option} onClick={() => this.searchCenter(option)} >{option}</Option>
-	    )
-	    })
+      return(
+        <Option value={option} onClick= {() => this.changeSort(option)} >{option}</Option>
+
+      )
+    })
     if(this.state.current == "favorite"){
       return (
         <div>
@@ -319,7 +344,7 @@ handleInfoOk = (e) => {
           theme="light"
           mode="horizontal"
           style={{ lineHeight: '64px', textAlign: 'center' }}
-          onClick={this.menuSelect}
+          onClick={this.handleClick}
           selectedKeys={[this.state.current]}
         >
         <Menu.Item key="app">
@@ -329,11 +354,18 @@ handleInfoOk = (e) => {
           <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
         </Menu.Item>
         </Menu>
-        </Header>
+      </Header>
+        </div>
         <div style = {{paddingTop: '5%'}}>
+        <div style = {{paddingTop: '1%', paddingBottom: '2%', textAlign: 'center'}} >
+        { (JSON.parse(ls.get("favorites")).length != 0)
+        ?<Button type="secondary" htmlType="submit" onClick = {e => this.clearFavorites(e)}> Clear Favorites</Button>
+        :<strong> Images you favorite will be here </strong>
+        }
+        </div>
         {favPhotos}
         </div>
-        {(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(arr))
+        {(this.state.searchData != "" && ls.get("favorites") != JSON.stringify(array))
         ?<Modal
           title="Basic Modal"
           visible={this.state.visible}
@@ -344,6 +376,9 @@ handleInfoOk = (e) => {
           <p> Date Created: {JSON.parse(ls.get("favorites"))[this.state.currentFav].data[0].date_created}</p>
           <p> Description: {JSON.parse(ls.get("favorites"))[this.state.currentFav].data[0].description_508}</p>
           <div style= {{textAlign: "center"}}>
+          <Facebook link= {this.state.searchData.items[this.state.currentItem].links[0].href} />
+          <Twitter link={this.state.searchData.items[this.state.currentItem].links[0].href} />
+          <Google link= {this.state.searchData.items[this.state.currentItem].links[0].href} />
           </div>
         </Modal>:
         <div/>
@@ -351,7 +386,7 @@ handleInfoOk = (e) => {
         </div>
       )
     }
-    var arr = []
+    var array = []
     return (
       <div className="App">
       <BackTop />
@@ -362,7 +397,7 @@ handleInfoOk = (e) => {
         theme="light"
         mode="horizontal"
         style={{ lineHeight: '64px' }}
-        onClick={this.menuSelect}
+        onClick={this.handleClick}
         selectedKeys={[this.state.current]}
       >
       <Menu.Item key="app">
@@ -372,10 +407,10 @@ handleInfoOk = (e) => {
         <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />Favorite Images
       </Menu.Item>
       </Menu>
-      <Search style={{ width: "30%", textAlign: 'center'}} placeholder="Search" id = "search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
+      <Search style={{ width: "30%", textAlign: 'center'}}  placeholder="Search" id = "search" onPressEnter={e => this.search(e)} onChange={e => this.userInput(e)} />
     </Header>
       </div>
-      <div className= "SearchForm" style = {{paddingTop: '8%', zIndex: 2}}>
+      <div className= "SearchForm"   style = {{paddingTop: '8%', zIndex: 2}}>
       <div className= "MoreOptions" style = {{paddingLeft: "35.4%", paddingTop: "1%"}}>
       <Collapse  defaultActiveKey={['0']} style={{ width: "45%"}}>
         <Panel header="More Search Options" key="1">
@@ -396,7 +431,7 @@ handleInfoOk = (e) => {
           </Col>
           {(ls.get("searchHistory") != null)
           ?<List
-            header={<div><strong>Click Item to Search</strong></div>}
+            header={<div><strong>Click Item to Search Again</strong></div>}
              size="small"
              dataSource={JSON.parse(ls.get("searchHistory")).reverse().slice(0,5)}
              renderItem={item => (
@@ -407,28 +442,28 @@ handleInfoOk = (e) => {
          }
           <Button  type="secondary" htmlType="submit" onClick = {e => this.clearSearch(e)}> Clear Search History </Button>
         </Panel>
-        <Panel header= "Filter Results" key="2">
-        <Col>
-        <Select defaultValue="None" style={{ width: "95%", paddingBottom: "2%"}} id = "sort" onChange={this.changeSort} >
-        {sorts}
-        </Select>
-        <div style = {{paddingBottom: "2%"}}>
-        <Button type="primary" htmlType="submit" onClick = {e => this.sortData(e)} >Update Results</Button>
-        </div>
-        <Button type="secondary" htmlType="submit" onClick = {e => this.clearSort(e)} >Clear Filters</Button>
-        </Col>
+        <Panel header="Sort Results" key="2">
+          <Col>
+          <Select defaultValue="None" style={{ width: "95%", paddingBottom: "2%"}} id = "sort" onChange={this.handleChange} >
+          {sorts}
+          </Select>
+          <div style = {{paddingBottom: "2%"}}>
+          <Button  type="primary" htmlType="submit" onClick = {e => this.sortData(e)} >Update Search</Button>
+          </div>
+          <Button  type="secondary" htmlType="submit"onClick = {e => this.clearSort(e)} >Clear Options</Button>
+          </Col>
         </Panel>
       </Collapse>
       </div>
       <br/>
-      <Button type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
+      <Button  type="primary" htmlType="submit" onClick = {e => this.search(e)}> Search </Button>
       </div>
-      <div className = "picGrid">
+      <div className = "photoGrid">
       {photos}
       </div>
-      {(this.state.searchData != "" && this.state.searchData != "null" && this.state.nasaData.metadata.total_hits != 0)
+      {(this.state.searchData != "" && this.state.searchData != "null" && this.state.searchData.metadata.total_hits != 0)
       ?<Modal
-      	id= "visible"
+        id= "visible"
         visible={this.state.visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
@@ -444,11 +479,11 @@ handleInfoOk = (e) => {
         :<p>Description: {this.state.searchData.items[this.state.currentItem].data[0].description} </p>
         }
         <div style= {{textAlign: "center"}}>
-        <Button icon="heart" onClick = {e => this.addFav(e)}>Add to Favorites</Button>
+        <Button icon="star" onClick = {e => this.addFavorite(e)}>Add to Favorites</Button>
         <br/>
-        <Facebook link={this.state.searchData.items[this.state.currentItem].links[0].href} />
+        <Facebook link= {this.state.searchData.items[this.state.currentItem].links[0].href} />
         <Twitter link={this.state.searchData.items[this.state.currentItem].links[0].href} />
-        <Google link={this.state.searchData.items[this.state.currentItem].links[0].href} />
+        <Google link= {this.state.searchData.items[this.state.currentItem].links[0].href} />
         </div>
       </Modal>:
       <div></div>
@@ -460,6 +495,7 @@ handleInfoOk = (e) => {
       onCancel={this.handleInfoCancel}
       >
       </Modal>
+      </div>
     );
   }
 }
