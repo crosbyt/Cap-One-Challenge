@@ -460,7 +460,6 @@ handleInfoOk = (e) => {
       onCancel={this.handleInfoCancel}
       >
       </Modal>
-      </div>
     );
   }
 }
