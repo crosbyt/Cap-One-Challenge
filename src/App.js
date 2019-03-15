@@ -421,12 +421,12 @@ handleInfoOk = (e) => {
       </Collapse>
       </div>
       <br/>
-      <Button type="primary" htmlType="submit" onClick = {e => this.search(e)}> Search </Button>
+      <Button type="primary" icon="search" onClick = {e => this.search(e)}> Search </Button>
       </div>
       <div className = "picGrid">
       {photos}
       </div>
-      {(this.state.searchData != "" && this.state.searchData != "null" && this.state.nasaData.metadata.total_hits != 0))
+      {(this.state.searchData != "" && this.state.searchData != "null" && this.state.nasaData.metadata.total_hits != 0)
       ?<Modal
       	id= "visible"
         visible={this.state.visible}
