@@ -312,7 +312,7 @@ handleInfoOk = (e) => {
     if(this.state.current == "favorite"){
       return (
         <div>
-        <div style= {{position: 'fixed', width: '100%' zIndex: 1}}>
+        <div style= {{position: 'fixed', width: '100%', zIndex: 1}}>
         <Header>
         <div className="logo" />
         <Menu
